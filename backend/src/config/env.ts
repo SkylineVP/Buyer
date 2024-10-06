@@ -1,4 +1,6 @@
-import process from "node:process"
+import { config } from "dotenv"
+
+config({ debug: true })
 
 export const ENV = {
   NODE_ENV: process.env.NODE_ENV,

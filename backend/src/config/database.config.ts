@@ -8,9 +8,7 @@ export interface DatabaseConfig {
   name: string
 }
 
-if (!process.env.DATABASE_USER || !process.env.DATABASE_PASSWORD || !process.env.DATABASE_NAME) {
-  throw new Error("Missing database ENV parameters")
-}
+console.log(ENV)
 
 export default (): { database: DatabaseConfig } => ({
   database: ENV.db,
