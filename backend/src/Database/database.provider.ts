@@ -1,12 +1,12 @@
-import { TypeOrmModuleOptions, TypeOrmModule } from "@nestjs/typeorm"
+import { TypeOrmModule } from "@nestjs/typeorm"
 import { ConfigService } from "@nestjs/config"
 import { DatabaseConfig } from "src/config/database.config"
-import { ENV } from "src/config/env"
 
 export const DatabaseProviders = [
   TypeOrmModule.forRootAsync({
+    imports: undefined,
     inject: [ConfigService],
-    useFactory: (configService: ConfigService): TypeOrmModuleOptions => {
+    useFactory: (configService: ConfigService): any => {
       const dbConfig = configService.get<DatabaseConfig>("database")
       return {
         type: "postgres",
@@ -15,8 +15,9 @@ export const DatabaseProviders = [
         username: dbConfig.user,
         password: dbConfig.password,
         database: dbConfig.name,
-        entities: [__dirname + "/../**/*.entity{.ts,.js}"],
-        synchronize: ENV.isDev,
+        entities: [__dirname + "/../Modules/**/*.entity{.ts,.js}"],
+        migrations: [__dirname + "/../migrations/**/*{.ts,.js}"],
+        synchronize: false,
       }
     },
   }),

@@ -8,8 +8,6 @@ export interface DatabaseConfig {
   name: string
 }
 
-console.log(ENV)
-
 export default (): { database: DatabaseConfig } => ({
   database: ENV.db,
 })
