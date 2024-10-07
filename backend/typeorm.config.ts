@@ -2,7 +2,6 @@ import { DataSource } from "typeorm"
 
 import { ENV } from "src/config/env"
 
-console.log(__dirname)
 export const AppDataSource = new DataSource({
   type: "postgres",
   ...ENV.db,

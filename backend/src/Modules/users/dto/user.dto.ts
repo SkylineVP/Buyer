@@ -1,4 +1,4 @@
-import { User } from "src/Modules/Users/entities/user.entity"
+import { User } from "src/Modules/users/entities/user.entity"
 
 export class UserDto {
   name: string

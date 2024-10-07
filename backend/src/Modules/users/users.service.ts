@@ -1,12 +1,14 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common"
+import { ConflictException, Injectable, NotFoundException, UseGuards } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { User } from "./entities/user.entity"
 
-import { UserDto } from "src/Modules/Users/dto/user.dto"
-import { CreateUserDto } from "src/Modules/Users/dto/create-user.dto"
-import { UpdateUserDto } from "src/Modules/Users/dto/update-user.dto"
+import { UserDto } from "src/Modules/users/dto/user.dto"
+import { CreateUserDto } from "src/Modules/users/dto/create-user.dto"
+import { UpdateUserDto } from "src/Modules/users/dto/update-user.dto"
+import { AuthGuard } from "src/Modules/auth/Auth.guard"
 
+@UseGuards(AuthGuard)
 @Injectable()
 export class UsersService {
   constructor(
@@ -38,14 +40,25 @@ export class UsersService {
     return new UserDto(user)
   }
 
+  async findByEmail(email: string): Promise<User | undefined> {
+    return this.usersRepository.findOne({ where: { email } })
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto): Promise<UserDto> {
-    const result = await this.usersRepository.update(id, updateUserDto)
+    try {
+      const result = await this.usersRepository.update(id, updateUserDto)
 
-    if (result.affected === 0) {
-      throw new NotFoundException(`User with id ${id} not found`)
+      if (result.affected === 0) {
+        throw new NotFoundException(`User with id ${id} not found`)
+      }
+
+      return this.find(result.affected)
+    } catch (error) {
+      if (error.code === "23505") {
+        throw new ConflictException("User with this email already exists.")
+      }
+      throw error // Если это не ошибка уникальности, просто выбрасываем
     }
-
-    return this.find(result.affected)
   }
 
   async remove(id: number): Promise<void> {
