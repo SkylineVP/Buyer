@@ -16,7 +16,7 @@ export class AuthService {
     const user = await this.userService.create(createUserDto)
     const payload = { email: user.email, id: user.id, name: user.name }
     return {
-      access_token: this.jwtService.sign(payload),
+      token: this.jwtService.sign(payload),
       ...user,
     }
   }
@@ -34,7 +34,7 @@ export class AuthService {
 
     const payload = { email: user.email, id: user.id, name: user.name }
     return {
-      access_token: this.jwtService.sign(payload),
+      token: this.jwtService.sign(payload),
       ...new UserDto(user),
     }
   }
